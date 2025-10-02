@@ -15,7 +15,7 @@ class StudentsController extends GetxController {
   var searchQuery = ''.obs;
 
   // Available semesters - now matching the Firestore string values
-  final semesters = ['All', '3rd', '5th', '7th'];
+  final semesters = ['All', '1st', '3rd', '5th', '7th'];
 
   // Department name
   late String departmentName;
@@ -40,7 +40,7 @@ class StudentsController extends GetxController {
 
       // Get reference to the students subcollection
       final studentsRef = _firestore
-          .collection('departments')
+          .collection('GPGC')
           .doc(departmentName)
           .collection('students');
 
@@ -64,7 +64,7 @@ class StudentsController extends GetxController {
       students.sort((a, b) => a.rollNumber.compareTo(b.rollNumber));
       filterStudents();
     } catch (e) {
-      print('Error fetching students: $e');
+      debugPrint('Error fetching students: $e');
       Get.snackbar(
         'Error',
         'Failed to load students',
@@ -106,18 +106,17 @@ class StudentsController extends GetxController {
   // Get avatar color based on name
   Color getAvatarColor(String name) {
     final colors = [
-      Colors.blue,
-      Colors.red,
-      Colors.green,
-      Colors.purple,
-      Colors.orange,
-      Colors.teal,
+      Colors.blue[500]!,
+      Colors.red[500]!,
+      Colors.green[500]!,
+      Colors.purple[500]!,
+      Colors.orange[500]!,
+      Colors.teal[500]!,
     ];
     return colors[name.length % colors.length];
   }
 
-  // Helper to convert semester string for display (already in correct format)
   String getSemesterDisplay(String semester) {
-    return semester; // Already in format like "7th", "5th", "3rd"
+    return semester;
   }
 }

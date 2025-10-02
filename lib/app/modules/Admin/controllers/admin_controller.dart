@@ -9,7 +9,7 @@ class Department {
   Department(this.name, this.icon, {this.color = Colors.blue});
 }
 
-class HomeController extends GetxController {
+class AdminController extends GetxController {
   final departments = <Department>[
     Department("Pakistan Studies", Icons.public, color: Colors.indigo), // 🌍
     Department("Computer Science", Icons.computer, color: Colors.blue), // 💻
@@ -20,26 +20,11 @@ class HomeController extends GetxController {
     Department("Political Science", Icons.gavel, color: Colors.redAccent), // ⚖️
     Department("Zoology", Icons.pets, color: Colors.brown), // 🐾
     Department("Botany", Icons.grass, color: Colors.green), // 🌱
-    Department("Pashto", Icons.translate, color: Colors.orange), // 📝
+    Department("Pashtu", Icons.translate, color: Colors.orange), // 📝
     Department("Urdu", Icons.language, color: Colors.pink), // ✍️
     Department("Mathematics", Icons.calculate, color: Colors.blueGrey), // ➗
     Department("Chemistry", Icons.science, color: Colors.deepOrange), // ⚗️
     Department("AI", Icons.memory, color: Colors.cyan), // 🤖
     Department("Physics", Icons.bolt, color: Colors.yellow.shade700), // ⚡
   ].obs;
-
-  // Search Query
-  var searchQuery = "".obs;
-
-  // Filtered Departments
-  List<Department> get filteredDepartments {
-    if (searchQuery.isEmpty) return departments;
-    return departments
-        .where(
-          (d) => d.name.toLowerCase().contains(searchQuery.value.toLowerCase()),
-        )
-        .toList();
-  }
-
-  var title = "Home".obs;
 }

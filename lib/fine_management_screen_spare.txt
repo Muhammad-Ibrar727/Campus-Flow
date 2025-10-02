@@ -1,0 +1,587 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class FineManagementScreen extends StatefulWidget {
+  @override
+  _FineManagementScreenState createState() => _FineManagementScreenState();
+}
+
+class _FineManagementScreenState extends State<FineManagementScreen> {
+  final List<Fine> fines = [
+    Fine(
+      id: 'F001',
+      studentName: 'John Smith',
+      studentId: 'S2023001',
+      amount: 25.00,
+      reason: 'Library Book Late Return',
+      issueDate: DateTime(2024, 1, 15),
+      dueDate: DateTime(2024, 2, 15),
+      status: FineStatus.pending,
+      type: FineType.library,
+    ),
+    Fine(
+      id: 'F002',
+      studentName: 'Emma Wilson',
+      studentId: 'S2023002',
+      amount: 50.00,
+      reason: 'Damage to Lab Equipment',
+      issueDate: DateTime(2024, 1, 10),
+      dueDate: DateTime(2024, 1, 25),
+      status: FineStatus.overdue,
+      type: FineType.damage,
+    ),
+    Fine(
+      id: 'F003',
+      studentName: 'Michael Brown',
+      studentId: 'S2023003',
+      amount: 15.00,
+      reason: 'Lost Library Card',
+      issueDate: DateTime(2024, 1, 20),
+      dueDate: DateTime(2024, 2, 20),
+      status: FineStatus.paid,
+      type: FineType.administrative,
+    ),
+    Fine(
+      id: 'F004',
+      studentName: 'Sarah Johnson',
+      studentId: 'S2023004',
+      amount: 30.00,
+      reason: 'Late Submission Fee',
+      issueDate: DateTime(2024, 1, 18),
+      dueDate: DateTime(2024, 2, 18),
+      status: FineStatus.pending,
+      type: FineType.administrative,
+    ),
+  ];
+
+  FineStatus _selectedFilter = FineStatus.all;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFF5F7FB),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // // Header
+            // _buildHeader(),
+            SizedBox(height: 16),
+
+            // Stats Cards
+            _buildStatsCards(),
+            SizedBox(height: 24),
+
+            // Fines Section
+            Expanded(child: _buildFinesSection()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.school, color: Color(0xFF4361EE), size: 32),
+          SizedBox(width: 12),
+          Text(
+            'Fine Manager',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF212529),
+            ),
+          ),
+          Spacer(),
+          CircleAvatar(
+            backgroundColor: Color(0xFF4361EE).withOpacity(0.1),
+            child: Icon(Icons.person, color: Color(0xFF4361EE)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsCards() {
+    final pendingFines = fines
+        .where((f) => f.status == FineStatus.pending)
+        .length;
+    final overdueFines = fines
+        .where((f) => f.status == FineStatus.overdue)
+        .length;
+    final totalAmount = fines.fold(0.0, (sum, fine) => sum + fine.amount);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          _buildStatCard(
+            'Total Fines',
+            '\Pkr${totalAmount.toStringAsFixed(1)}',
+            Icons.attach_money,
+            Color(0xFF4361EE),
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'Pending',
+            pendingFines.toString(),
+            Icons.pending_actions,
+            Color(0xFFF8961E),
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'Overdue',
+            overdueFines.toString(),
+            Icons.warning,
+            Color(0xFFF72585),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                Spacer(),
+                Icon(Icons.more_vert, color: Colors.grey, size: 18),
+              ],
+            ),
+            SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF212529),
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(color: Color(0xFF6C757D), fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFinesSection() {
+    final filteredFines = _selectedFilter == FineStatus.all
+        ? fines
+        : fines.where((fine) => fine.status == _selectedFilter).toList();
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Text(
+                  'Student Fines',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<FineStatus>(
+                      value: _selectedFilter,
+                      onChanged: (FineStatus? newValue) {
+                        setState(() {
+                          _selectedFilter = newValue!;
+                        });
+                      },
+                      items: FineStatus.values.map((FineStatus status) {
+                        return DropdownMenuItem<FineStatus>(
+                          value: status,
+                          child: Text(
+                            status == FineStatus.all
+                                ? 'All Fines'
+                                : _getStatusText(status),
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredFines.length,
+              itemBuilder: (context, index) {
+                return _buildFineCard(filteredFines[index]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFineCard(Fine fine) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: _getTypeColor(fine.type).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  _getTypeIcon(fine.type),
+                  color: _getTypeColor(fine.type),
+                  size: 16,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fine.studentName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      fine.studentId,
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(fine.status).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _getStatusText(fine.status),
+                  style: TextStyle(
+                    color: _getStatusColor(fine.status),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            fine.reason,
+            style: TextStyle(fontSize: 14, color: Color(0xFF495057)),
+          ),
+          SizedBox(height: 12),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Amount',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  Text(
+                    '\$${fine.amount.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF212529),
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Due Date',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  Text(
+                    DateFormat('MMM dd, yyyy').format(fine.dueDate),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: fine.status == FineStatus.overdue
+                          ? Color(0xFFF72585)
+                          : Color(0xFF212529),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    _showFineDetails(fine);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Color(0xFF4361EE),
+                    side: BorderSide(color: Color(0xFF4361EE)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text('View Details'),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _processPayment(fine);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF4361EE),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text('Pay Now'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(FineStatus status) {
+    switch (status) {
+      case FineStatus.pending:
+        return Color(0xFFF8961E);
+      case FineStatus.paid:
+        return Color(0xFF4CC9F0);
+      case FineStatus.overdue:
+        return Color(0xFFF72585);
+      case FineStatus.all:
+        return Colors.grey;
+    }
+  }
+
+  String _getStatusText(FineStatus status) {
+    switch (status) {
+      case FineStatus.pending:
+        return 'Pending';
+      case FineStatus.paid:
+        return 'Paid';
+      case FineStatus.overdue:
+        return 'Overdue';
+      case FineStatus.all:
+        return 'All';
+    }
+  }
+
+  Color _getTypeColor(FineType type) {
+    switch (type) {
+      case FineType.library:
+        return Color(0xFF4361EE);
+      case FineType.damage:
+        return Color(0xFFF72585);
+      case FineType.administrative:
+        return Color(0xFF4CC9F0);
+    }
+  }
+
+  IconData _getTypeIcon(FineType type) {
+    switch (type) {
+      case FineType.library:
+        return Icons.library_books;
+      case FineType.damage:
+        return Icons.construction;
+      case FineType.administrative:
+        return Icons.admin_panel_settings;
+    }
+  }
+
+  void _showFineDetails(Fine fine) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Fine Details'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDetailRow('Student', fine.studentName),
+            _buildDetailRow('Student ID', fine.studentId),
+            _buildDetailRow('Fine ID', fine.id),
+            _buildDetailRow('Amount', '\$${fine.amount.toStringAsFixed(2)}'),
+            _buildDetailRow('Reason', fine.reason),
+            _buildDetailRow(
+              'Issue Date',
+              DateFormat('MMM dd, yyyy').format(fine.issueDate),
+            ),
+            _buildDetailRow(
+              'Due Date',
+              DateFormat('MMM dd, yyyy').format(fine.dueDate),
+            ),
+            _buildDetailRow('Status', _getStatusText(fine.status)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$label: ', style: TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+  void _processPayment(Fine fine) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Process Payment'),
+        content: Text(
+          'Process payment of \$${fine.amount.toStringAsFixed(2)} for ${fine.studentName}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Payment processed successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: Text('Confirm Payment'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum FineStatus { all, pending, paid, overdue }
+
+enum FineType { library, damage, administrative }
+
+class Fine {
+  final String id;
+  final String studentName;
+  final String studentId;
+  final double amount;
+  final String reason;
+  final DateTime issueDate;
+  final DateTime dueDate;
+  final FineStatus status;
+  final FineType type;
+
+  Fine({
+    required this.id,
+    required this.studentName,
+    required this.studentId,
+    required this.amount,
+    required this.reason,
+    required this.issueDate,
+    required this.dueDate,
+    required this.status,
+    required this.type,
+  });
+}

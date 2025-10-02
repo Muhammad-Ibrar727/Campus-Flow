@@ -1,9 +1,9 @@
-import 'package:campus_flow/app/modules/Admin/view/admin_panel.dart';
+import 'package:campus_flow/app/modules/Admin/view/admin_panel_bottom_navigation.dart';
+import 'package:campus_flow/app/modules/home/views/home_view_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import 'login_screen.dart';
-import '../../home/views/home_view.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -22,9 +22,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (authController.firebaseUser.value != null) {
         String? role = await authController.fetchUserRole();
         if (role == "Admin") {
-          Get.offAll(() => AdminDashboard());
+          Get.offAll(() => AdminPanelBottomNavigation());
         } else if (role == "Teacher") {
-          Get.offAll(() => const HomeView());
+          Get.offAll(() => HomeViewBottomNavigation());
         }
       } else {
         Get.offAll(() => LoginScreen());

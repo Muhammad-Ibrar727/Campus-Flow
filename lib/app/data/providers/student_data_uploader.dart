@@ -84,6 +84,8 @@ class FirebaseUploadScreen extends StatelessWidget {
   }
   ''';
 
+  const FirebaseUploadScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

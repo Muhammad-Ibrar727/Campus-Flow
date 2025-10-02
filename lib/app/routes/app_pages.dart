@@ -2,7 +2,6 @@ import 'package:campus_flow/app/modules/Admin/view/admin_panel.dart';
 import 'package:campus_flow/app/modules/auth/views/welcome_screen.dart';
 import 'package:get/get.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/student/views/student_list_view.dart';
 
 import 'app_routes.dart';
 

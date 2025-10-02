@@ -5,4 +5,5 @@ abstract class AppRoutes {
   static const LOGIN = '/login';
   static const DEP_STD = '/department_students';
   static const ADMIN = '/Admin';
+  static const UPLOAD_EXCEL = '/upload_excel';
 }
