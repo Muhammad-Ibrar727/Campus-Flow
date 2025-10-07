@@ -1,11 +1,8 @@
 import 'package:campus_flow/app/modules/Admin/view/admin_panel.dart';
 import 'package:campus_flow/app/modules/Admin/view/manage_users/user_management_page.dart';
 import 'package:campus_flow/app/modules/Admin/view/profile/admin_profile.dart';
-import 'package:campus_flow/app/modules/auth/views/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class AdminPanelBottomNavigation extends StatefulWidget {
   const AdminPanelBottomNavigation({super.key});
@@ -19,6 +16,19 @@ class _AdminPanelBottomNavigationState
     extends State<AdminPanelBottomNavigation> {
   int _currentIndex = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   final List<Widget> Screens = [
     AdminDashboard(),
@@ -35,9 +45,17 @@ class _AdminPanelBottomNavigationState
         ),
         backgroundColor: Colors.blueGrey[700],
         elevation: 0,
-       
       ),
-      body: Screens[_currentIndex],
+      // body: Screens[_currentIndex],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: Screens,
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -50,10 +68,16 @@ class _AdminPanelBottomNavigationState
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
+
           onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+            // setState(() {
+            //   _currentIndex = index;
+            // });
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,

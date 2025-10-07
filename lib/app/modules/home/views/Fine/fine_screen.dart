@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FineManagementScreen extends StatelessWidget {
+  const FineManagementScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

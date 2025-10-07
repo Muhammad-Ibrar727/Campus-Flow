@@ -18,7 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 10), () async {
       if (authController.firebaseUser.value != null) {
         String? role = await authController.fetchUserRole();
         if (role == "Admin") {
@@ -35,15 +35,65 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.school, size: 80, color: Colors.blue),
+            // App Icon
+            Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.blue.shade300, width: 2),
+              ),
+              child: Icon(Icons.school, size: 45, color: Colors.blue.shade700),
+            ),
+           
+
+            SizedBox(height: 30),
+
+            Text(
+              "CAMPUS FLOW",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade800,
+                letterSpacing: 1.2,
+              ),
+            ),
+
+            SizedBox(height: 10),
+
+
+            Text(
+              "GPGC Mansehra",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700, 
+                color: Colors.grey.shade700,
+                letterSpacing: 1.0,
+              ),
+            ),
+
+            SizedBox(height: 100),
+
+            // Loading indicator
+            SizedBox(
+              width: 25,
+              height: 25,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
+              ),
+            ),
+
             SizedBox(height: 20),
             Text(
-              "Welcome to Campus Flow!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              "Loading...",
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
           ],
         ),

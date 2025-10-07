@@ -40,11 +40,13 @@ class AuthController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
+      // 1. Create Firebase auth account
       UserCredential userCred = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
 
+      // 2. Create user document in Firestore with isApproved: false
       await _db.collection("users").doc(userCred.user!.uid).set({
         "name": name.trim(),
         "email": email.trim(),
@@ -52,12 +54,20 @@ class AuthController extends GetxController {
         "isApproved": false, // Always false for new signups
         "createdAt": FieldValue.serverTimestamp(),
       });
+
+      // 3. 🚨 CRITICAL FIX: SIGN OUT IMMEDIATELY AFTER SIGNUP
+      await _auth.signOut();
+
+      // 4. Clear local state
+      firebaseUser.value = null;
+      this.role.value = '';
+      isApproved.value = false;
     } on FirebaseAuthException catch (e) {
       errorMessage.value = _getSignupErrorMessage(e);
-      rethrow; // Re-throw to let UI handle the error
+      rethrow;
     } catch (e) {
       errorMessage.value = "An unexpected error occurred during signup.";
-      rethrow; // Re-throw to let UI handle the error
+      rethrow;
     } finally {
       isLoading.value = false;
     }

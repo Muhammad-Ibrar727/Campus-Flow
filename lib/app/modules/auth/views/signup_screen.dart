@@ -1,3 +1,4 @@
+import 'package:campus_flow/app/modules/auth/views/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -425,27 +426,27 @@ class SignupScreen extends StatelessWidget {
         selectedRole.value,
       );
 
+      // 🎯 UPDATED SUCCESS MESSAGE
       Get.snackbar(
-        "Success",
-        "Your account has been created! Waiting for admin approval.",
+        "Success!",
+        "Account created! Please wait for admin approval before logging in.",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green[400],
         colorText: Colors.white,
         borderRadius: 12,
         margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 4),
         isDismissible: true,
       );
 
+      // Clear form
       nameController.clear();
       emailController.clear();
       passwordController.clear();
 
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        Get.offAllNamed('/login');
-      });
+      Get.offAll(() => LoginScreen()); // This replaces the current fix
     } catch (e) {
-      // Show the error message from the controller
+      // Error handling remains the same...
       if (authController.errorMessage.value.isNotEmpty) {
         Get.snackbar(
           "Signup Failed",

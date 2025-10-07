@@ -23,12 +23,25 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
   final _currentIndex = 0.obs;
   final AuthController authController = Get.find<AuthController>();
   final ProfileController Profilecontroller = Get.put(ProfileController());
+  late PageController _pageController;
 
   final List<Widget> Screens = [
     HomeView(),
     SearchStudentScreen(),
     FineManagementScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex.value);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +57,14 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
           ],
         ),
       ),
-      drawer: _buildDrawer(), // Add drawer here
-      body: Obx(() => Screens[_currentIndex.value]),
+      drawer: _buildDrawer(),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          _currentIndex.value = index;
+        },
+        children: Screens,
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -60,9 +79,12 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
           () => BottomNavigationBar(
             currentIndex: _currentIndex.value,
             onTap: (index) {
-              setState(() {
-                _currentIndex.value = index;
-              });
+              _currentIndex.value = index;
+              _pageController.animateToPage(
+                index,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
             },
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.white,
@@ -88,7 +110,7 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
   }
 
   Widget _buildDrawer() {
-    final currentIndex = 0.obs; // Make currentIndex reactive
+    final currentIndex = 0.obs;
 
     return Drawer(
       backgroundColor: Colors.white,
@@ -169,7 +191,7 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
                                 colors: [
                                   Colors.white.withOpacity(0.3),
                                   Colors.white.withOpacity(0.1),
-                                ],
+                                  ],
                               ),
                             ),
                             child: Icon(
@@ -328,7 +350,8 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
               icon: Icons.home_outlined,
               title: 'Home',
               onTap: () {
-                _currentIndex.value = 0; // Update reactive variable
+                _currentIndex.value = 0;
+                _pageController.jumpToPage(0);
                 Get.back();
               },
               isSelected: _currentIndex.value == 0,
@@ -341,7 +364,8 @@ class _HomeViewBottomNavigationState extends State<HomeViewBottomNavigation> {
               icon: Icons.person_search_outlined,
               title: 'Find Student',
               onTap: () {
-                _currentIndex.value = 1; // Update reactive variable
+                _currentIndex.value = 1;
+                _pageController.jumpToPage(1);
                 Get.back();
               },
               isSelected: _currentIndex.value == 1,

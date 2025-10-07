@@ -183,7 +183,6 @@
 
 import 'package:campus_flow/app/modules/Admin/controllers/admin_stats_controller.dart';
 import 'package:campus_flow/app/modules/Admin/view/departments.dart';
-import 'package:campus_flow/app/modules/auth/views/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -24,6 +24,6 @@ class CampusFlow extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: AppRoutes.INITIAL,
       getPages: AppPages.pages,
-    );
+    ); 
   }
 }
